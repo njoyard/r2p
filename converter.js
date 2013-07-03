@@ -83,7 +83,7 @@ var parts = {
 		transparent: function(x) { return x; },
 		reduce: function(converted) {
 			function reduce(ast) {
-				// Reduce children
+				// Reduce children first
 				if (ast.content) {
 					ast.content = reduce(ast.content);
 				} else if (ast.operands) {
@@ -128,11 +128,21 @@ var parts = {
 					});
 				}
 
-				if (ast.type === "concatenation" && ast.operands.every(function(o) { return o.type === "char"; })) {
-					ast = {
-						type: "char",
-						content: ast.operands.map(function(o) { return o.content; }).join("")
-					};
+				// Turn disjunctions with empty alternatives into optionals
+				if (ast.type === "disjunction" && ast.operands.some(function(o) { return o.type === "empty"; })) {
+					ast.operands = ast.operands.filter(function(o) { return o.type !== "empty"; });
+
+					if (ast.operands.length === 1) {
+						ast = {
+							type: "optional",
+							content: ast.operands[0]
+						};
+					} else {
+						ast = {
+							type: "optional",
+							content: ast
+						};
+					}
 				}
 
 				return ast;
@@ -140,7 +150,7 @@ var parts = {
 
 			return {
 				ast: reduce(converted.ast),
-				nonTerminals: converted.nonTerminals
+				nonTerminals: converted.nonTerminals.map(reduce)
 			};
 		}
 	},
@@ -154,7 +164,10 @@ var parts = {
 				return "nonTerminal" + idx;
 			}
 
-			function convert(ast) {
+			function convert(ast, topLevel) {
+				if (typeof topLevel !== "boolean")
+					topLevel = false;
+
 				switch(ast.type) {
 					case "nonTerminal":
 						return nonTerminalName(ast.content);
@@ -163,10 +176,16 @@ var parts = {
 						return ast.operands.map(convert).join(" ");
 
 					case "disjunction":
-						return "(" + ast.operands.map(convert).join(" / ") + ")";
+						if (topLevel)
+							return ast.operands.map(convert).join(" / ");
+						else
+							return "(" + ast.operands.map(convert).join(" / ") + ")";
 
 					case "repeat":
 						return convert(ast.content) + "*";
+
+					case "optional":
+						return convert(ast.content) + "?";
 
 					case "char":
 						return '"' + ast.content + '"';
@@ -188,13 +207,13 @@ var parts = {
 			rules = converted.nonTerminals.map(function(nt, idx) {
 				return {
 					name: nonTerminalName(idx),
-					rule: convert(nt)
+					rule: convert(nt, true)
 				};
 			});
 
 			rules.unshift({
 				name: "start",
-				rule: convert(converted.ast)
+				rule: convert(converted.ast, true)
 			});
 
 			return rules.map(function(r) {
