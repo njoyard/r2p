@@ -1,0 +1,21 @@
+{
+  "name": "r2p",
+  "version": "0.0.1",
+  "description": "Regex to PEG converter",
+  "main": "r2p.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/njoyard/r2p.git"
+  },
+  "author": "Nicolas Joyard",
+  "license": "BSD",
+  "bugs": {
+    "url": "https://github.com/njoyard/r2p/issues"
+  },
+  "devDependencies": {
+    "pegjs": "*"
+  }
+}
