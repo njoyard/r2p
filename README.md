@@ -1,7 +1,7 @@
 r2p
 ===
 
-r2p is a Javascript Regex to PEG converter. It parses regexes using [PEGjs](http://pegjs.majda.cz) with a grammar inspired by [Kevin Mehall's regexp grammar](https://github.com/kevinmehall/regex-derivs/blob/master/parse-regex.pegjs) and converts them to PEGjs-compatible grammar using the method described in [Marcelo Oikawa, Roberto Ierusalimschy and Ana Lucia de Moura's "Converting regexes to Parsing Expression Grammars"](http://www.inf.puc-rio.br/~roberto/docs/ry10-01.pdf).
+r2p is a Javascript Regex to PEG converter. It parses regexes using [PEGjs](http://pegjs.majda.cz) with grammar rules inspired by [Kevin Mehall's regexp grammar](https://github.com/kevinmehall/regex-derivs/blob/master/parse-regex.pegjs) and converts them to PEGjs-compatible grammar using the method described in [Marcelo Oikawa, Roberto Ierusalimschy and Ana Lucia de Moura's "Converting regexes to Parsing Expression Grammars"](http://www.inf.puc-rio.br/~roberto/docs/ry10-01.pdf).
 
 Building
 --------
